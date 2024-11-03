@@ -128,3 +128,35 @@ sudo nginx -t
 </ol>
 
 
+## Cuestiones finales
+
+
+<b>1. Busca información de qué otros métodos de balanceo se pueden aplicar con Nginx y describe al menos 3 de ellos.</b>
+
+Otros métodos de balanceo que permite Nginx son: 
+
+- <b>least_conn:</b> el proxy enviará las solicitudes entrantes al servidor que tenga un menor número de conexiones activas en 
+ese momento, para evitar las eventuales sobrecargas.
+
+- <b>ip_hash:</b> se asigna cada solicitud a un servidor en función del hash de la dirección del cliente, de manera que todas 
+las solicitudes de un mismo cliente serán dirigidas siempre al mismo servidor. En caso de que caiga el servidor, se enviará la 
+petición al siguiente servidor en el grupo.
+
+- <b>least_time:</b> la petición será enviada al servidor con menor latencia y menor cantidad de conexiones activas, es decir, 
+el que ofrezca un menor tiempo de espera para la respuesta.
+
+<b>2. Si quiero añadir 2 servidores web más al balanceo de carga, describe detalladamente qué configuración habría que añadir y dónde.</b>
+
+Considerando que tuvieramos dos nuevos servidores con configuraciones correctas (contenido correcto y con permisos adecuados en /var/www, 
+archivos de configuración en /etc/nginx/sites-available correctos y Nginx funcionando correctamente y sin problemas con los permisos del 
+cortafuegos), sólo sería necesario indicar las IPs y puertos de los servidores en el archivo de configuración del proxy. Por ejemplo:
+```console
+upstream backend_hosts {
+    server 192.168.0.20:8080;
+    server 192.168.0.21:8080;	
+    server 192.168.0.23:8080;	# Nuevo servidor
+    server 192.168.0.24:8080;	# Nuevo servidor
+}
+```
+En caso de error, sería necesario realizar las comprobaciones oportunas en los nuevos servidores web (que Nginx funcione correctamente en ellos 
+y que exista conexión estable entre estos y el proxy)
